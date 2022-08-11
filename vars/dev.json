@@ -1,0 +1,4 @@
+{
+    "env": "dev",
+    "war_download_url" : "https://raw.githubusercontent.com/aeimer/java-example-helloworld-war/master/dist/helloworld.war"
+}

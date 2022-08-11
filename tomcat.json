@@ -1,0 +1,46 @@
+{
+    "builders": [
+        {
+            "type" : "amazon-ebs",
+            "source_ami" : "{{user `source_ami`}}",
+            "ssh_username" : "ec2-user",
+            "region" : "{{user `region`}}",
+            "ami_name" : "{{user `namespace`}}-{{user `compact_name`}}-{{user `env`}}-tomcat-{{user `tomcat_version`}}",
+            "instance_type" : "t2.micro"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "./files/ssh",
+            "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "script": "prerequisites.sh"
+        },
+        {
+            "type": "shell",
+            "inline": ["mkdir {{user `playbooks_path`}} && git clone {{user `ansible_playbooks_repo`}} {{user `playbooks_path`}}"]
+        },
+        {
+            "type": "file",
+            "source": "./files/server.xml",
+            "destination": "{{user `playbooks_path`}}/files/server.xml"
+        },
+        {
+            "type": "file",
+            "source": "./vars/commons.json",
+            "destination": "{{user `playbooks_path`}}/vars/variables.json"
+        },
+        {
+            "type": "shell",
+            "inline": ["cd {{user `playbooks_path`}} && ansible-playbook tomcat_war_deployment.yml --extra-vars @./vars/variables.json --extra-vars 'war_download_url={{user `war_download_url`}}'"]
+        },
+        {
+            "type": "shell",
+            "inline": ["cd {{user `playbooks_path`}} && ansible-playbook hardening.yml --extra-vars @./vars/variables.json"]
+        }
+    ]
+}
+ 
