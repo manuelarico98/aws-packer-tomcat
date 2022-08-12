@@ -48,7 +48,7 @@ build {
   provisioner "shell" {
     inline = ["cd ${var.playbooks_path} && ansible-playbook tomcat_war_deployment.yml --extra-vars @./vars/variables.json --extra-vars 'war_download_url=${var.war_download_url}'"]
   }
-/*
+  /*
   provisioner "shell" {
     inline = ["cd ${var.playbooks_path} && ansible-playbook hardening.yml --extra-vars @./vars/variables.json"]
   }
